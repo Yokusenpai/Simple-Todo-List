@@ -1,0 +1,220 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Todo List</title>
+
+    <style>
+      /* Page container styling */
+      body {
+        margin: 15%;
+        background: #fff;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        padding: 15px;
+        font-size: 15px;
+        width: 600px;
+      }
+
+      /* Input field styling */
+      input[type='text'] {
+        width: 75%;
+        padding: 10px;
+        margin-bottom: 25px;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        outline-color: blue;
+      }
+
+      /* Checkbox styling */
+      input[type='checkbox'] {
+        accent-color: blue;
+      }
+
+      /* Default button style (Add button) */
+      button {
+        margin: 5px;
+        padding: 10px 15px;
+        background-color: rgb(76, 179, 76);
+        border-radius: 6px;
+        color: white;
+        border: none;
+        cursor: pointer;
+      }
+
+      /* Hover effect */
+      button:hover {
+        background-color: rgb(48, 141, 48);
+      }
+
+      /* Task item styling */
+      li {
+        list-style: none;
+        margin-bottom: 25px;
+        align-items: center;
+      }
+
+      /* Completed task style */
+      .completed {
+        text-decoration: line-through;
+        color: gray;
+      }
+
+      /* Edit & Remove buttons */
+      .edit-btn {
+        background-color: orange;
+      }
+
+      .remove-btn {
+        background-color: red;
+      }
+      #clearBtn {
+        background-color: orangered;
+        padding: 16px 24px;
+      }
+      .hide {
+        display: none;
+      }
+      ul > div:nth-last-child {
+        display: flex;
+        justify-content: space-between;
+      }
+    </style>
+  </head>
+
+  <body>
+    <h1>To-Do List</h1>
+
+    <!-- Input section -->
+    <div>
+      <input id="taskInput" type="text" placeholder="Enter new task" />
+      <button id="addBtn">Add Task</button>
+    </div>
+
+    <!-- Task list (UL as required) -->
+    <ul id="taskList"></ul>
+
+    <div id="infoContainer" class="hide">
+      <p>Total tasks: <span id="totalTask"></span></p>
+      <p>Completed tasks: <span id="completedTask"></span></p>
+      <button id="clearBtn">Clear All</button>
+    </div>
+    <script>
+      // Select elements
+      var total_task = 0;
+      var completed_task = 0;
+      const taskInput = document.getElementById('taskInput');
+      const addBtn = document.getElementById('addBtn');
+      const taskList = document.getElementById('taskList');
+      const clearBtn = document.getElementById('clearBtn');
+      const totalTask = document.getElementById('totalTask');
+      const completedTask = document.getElementById('completedTask');
+      const infoContainer = document.getElementById('infoContainer');
+      //  ADD TASK FUNCTION
+      taskInput.addEventListener('keypress', function (event) {
+        if (event.key === 'Enter') {
+          addBtn.click();
+        }
+      });
+      addBtn.addEventListener('click', function () {
+        // Prevent empty task
+        if (taskInput.value.trim() === '') {
+          alert('Please enter a task!');
+          return;
+        }
+
+        // Create <li> element
+        const li = document.createElement('li');
+
+        // Create checkbox
+        const checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+
+        // Create span to hold task text
+        const span = document.createElement('span');
+        span.textContent = taskInput.value;
+
+        // Create Edit button
+        const editBtn = document.createElement('button');
+        editBtn.textContent = 'Edit';
+        editBtn.classList.add('edit-btn');
+
+        //clear all btn
+        const clearBtn = document.createElement('button');
+        clearBtn.textContent = 'Clear All';
+        clearBtn.classList.add('clear-btn');
+
+        // Create Remove button
+        const removeBtn = document.createElement('button');
+        removeBtn.textContent = 'Remove';
+        removeBtn.classList.add('remove-btn');
+
+        // Left side (checkbox + text)
+        const leftDiv = document.createElement('div');
+        leftDiv.appendChild(checkbox);
+        leftDiv.appendChild(span);
+
+        // Right side (buttons)
+        const rightDiv = document.createElement('div');
+        rightDiv.appendChild(editBtn);
+        rightDiv.appendChild(removeBtn);
+
+        // Append both sides to li
+        li.appendChild(leftDiv);
+        li.appendChild(rightDiv);
+
+        // Add li to ul
+        taskList.appendChild(li);
+        total_task += 1;
+        totalTask.textContent = total_task;
+        if (total_task > 1) {
+          infoContainer.classList.remove('hide');
+        }
+        // Clear input
+        taskInput.value = '';
+
+        //  MARK COMPLETE FUNCTION
+        checkbox.addEventListener('change', function () {
+          span.classList.toggle('completed');
+          if (checkbox.checked) {
+            completed_task += 1;
+          } else {
+            completed_task -= 1;
+          }
+          completedTask.textContent = completed_task;
+        });
+
+        //  REMOVE FUNCTION
+        removeBtn.addEventListener('click', function () {
+          total_task -= 1;
+          totalTask.textContent = total_task;
+          li.remove();
+          if (total_task < 2) {
+            infoContainer.classList.add('hide');
+          }
+        });
+
+        // EDIT FUNCTION (Dialog box)
+        editBtn.addEventListener('click', function () {
+          // Open browser dialog box
+          const updatedTask = prompt('Edit task:', span.textContent);
+
+          // If user pressed OK and didn't leave empty
+          if (updatedTask !== null && updatedTask.trim() !== '') {
+            span.textContent = updatedTask;
+          }
+        });
+      });
+      //CLEAR BTN
+      clearBtn.addEventListener('click', function () {
+        taskList.innerHTML = '';
+        total_task = 0;
+        completed_task = 0;
+        totalTask.textContent = total_task;
+        completedTask.textContent = completed_task;
+        infoContainer.classList.add('hide');
+      });
+    </script>
+  </body>
+</html>
